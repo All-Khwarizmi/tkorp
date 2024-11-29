@@ -7,7 +7,12 @@ export const DATABASE_POOL = 'DATABASE_POOL';
 
 const databasePoolFactory = async (configService: ConfigService) => {
   return new Pool({
-    connectionString: configService.get<string>('DATABASE_URL'),
+    user: 'postgres',
+    password: 'postgres',
+    host: 'localhost',
+    port: 5432,
+    database: 'myapp',
+    ssl: false
   });
 };
 

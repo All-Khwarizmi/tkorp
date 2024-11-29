@@ -1,12 +1,17 @@
 // apps/api/src/scripts/db-setup.ts
 import { Pool } from 'pg';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-dotenv.config();
+// Load .env.local file
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
 async function initializeDb() {
+  // Log connection string for debugging
+  console.log('Using connection string:', process.env.DATABASE_URL);
+
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.DATABASE_URL
   });
 
   try {
