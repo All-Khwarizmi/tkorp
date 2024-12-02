@@ -6,6 +6,7 @@ import { DatabaseModule } from './config/database.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PersonModule } from './person/person.module';
+import { AnimalModule } from './animal/animal.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PersonModule } from './person/person.module';
     }),
     DatabaseModule,
     PersonModule,
+    AnimalModule,
   ],
   controllers: [AppController],
   providers: [AppService],
