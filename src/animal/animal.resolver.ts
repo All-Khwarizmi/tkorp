@@ -19,6 +19,11 @@ import { Person } from '../person/entities/person.entity';
 import { PersonService } from '../person/person.service';
 import { AnimalModel } from './interfaces/animal.interface';
 import { OrderByInput } from './dto/order-by.input';
+import {
+  AnimalSpeciesCount,
+  OwnershipStats,
+  OwnerWeightStats,
+} from './dto/stats.types';
 
 @ObjectType()
 export class PaginatedAnimal extends Paginated(Animal) {}
@@ -49,6 +54,77 @@ export class AnimalResolver {
         ownerId: item.ownerId,
       })),
     };
+  }
+
+  @Query(() => [AnimalSpeciesCount], { name: 'mostCommonSpecies' })
+  async getMostCommonSpecies() {
+    return this.animalService.getMostCommonSpecies();
+  }
+
+  @Query(() => OwnershipStats, { name: 'topOwner' })
+  async getTopOwner() {
+    const [topOwnerStats] = await this.animalService.getTopOwners();
+    const ownerData = await this.personService.findOne(topOwnerStats.ownerId);
+    const owner: Person = {
+      id: ownerData.id,
+      lastName: ownerData.lastName,
+      firstName: ownerData.firstName,
+      email: ownerData.email,
+      phoneNumber: ownerData.phoneNumber,
+    };
+    return {
+      owner,
+      animalCount: topOwnerStats.animalCount,
+    };
+  }
+
+  @Query(() => OwnershipStats, { name: 'topCatOwner' })
+  async getTopCatOwner() {
+    const [topCatOwnerStats] = await this.animalService.getTopCatOwners();
+    const ownerData = await this.personService.findOne(
+      topCatOwnerStats.ownerId,
+    );
+    const owner: Person = {
+      id: ownerData.id,
+      lastName: ownerData.lastName,
+      firstName: ownerData.firstName,
+      email: ownerData.email,
+      phoneNumber: ownerData.phoneNumber,
+    };
+    return {
+      owner,
+      animalCount: topCatOwnerStats.animalCount,
+    };
+  }
+
+  @Query(() => OwnerWeightStats, { name: 'ownerWithHeaviestPets' })
+  async getOwnerWithHeaviestPets() {
+    const [ownerStats] = await this.animalService.getOwnersByTotalPetWeight();
+    const ownerData = await this.personService.findOne(ownerStats.ownerId);
+    const owner: Person = {
+      id: ownerData.id,
+      lastName: ownerData.lastName,
+      firstName: ownerData.firstName,
+      email: ownerData.email,
+      phoneNumber: ownerData.phoneNumber,
+    };
+    return {
+      owner,
+      animalCount: ownerStats.animalCount,
+      totalWeight: ownerStats.totalWeight || 0,
+    };
+  }
+
+  @Query(() => Animal, { name: 'oldestAnimal' })
+  async getOldestAnimal() {
+    const animal = await this.animalService.getOldestAnimal();
+    return this.mapToGraphQL(animal);
+  }
+
+  @Query(() => Animal, { name: 'heaviestAnimal' })
+  async getHeaviestAnimal() {
+    const animal = await this.animalService.getHeaviestAnimal();
+    return this.mapToGraphQL(animal);
   }
 
   @Query(() => Animal, { name: 'animal' })
@@ -82,18 +158,25 @@ export class AnimalResolver {
 
   @ResolveField('owner', () => Person)
   async getOwner(@Parent() animal: Animal): Promise<Person> {
-    const owner = await this.personService.findOne(animal.ownerId);
+    const ownerData = await this.personService.findOne(animal.ownerId);
     return {
-      id: owner.id,
-      lastName: owner.lastName,
-      firstName: owner.firstName,
-      email: owner.email,
-      phoneNumber: owner.phoneNumber,
+      id: ownerData.id,
+      lastName: ownerData.lastName,
+      firstName: ownerData.firstName,
+      email: ownerData.email,
+      phoneNumber: ownerData.phoneNumber,
     };
   }
 
   private async mapToGraphQL(animal: AnimalModel): Promise<Animal> {
-    const owner = await this.personService.findOne(animal.ownerId);
+    const ownerData = await this.personService.findOne(animal.ownerId);
+    const owner: Person = {
+      id: ownerData.id,
+      lastName: ownerData.lastName,
+      firstName: ownerData.firstName,
+      email: ownerData.email,
+      phoneNumber: ownerData.phoneNumber,
+    };
     return {
       id: animal.id,
       name: animal.name,
@@ -103,13 +186,7 @@ export class AnimalResolver {
       color: animal.color,
       weight: animal.weight,
       ownerId: animal.ownerId,
-      owner: {
-        id: owner.id,
-        lastName: owner.lastName,
-        firstName: owner.firstName,
-        email: owner.email,
-        phoneNumber: owner.phoneNumber,
-      },
+      owner,
     };
   }
 }

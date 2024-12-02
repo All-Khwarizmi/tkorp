@@ -24,6 +24,11 @@ enum AnimalOrderField {
   weight
 }
 
+type AnimalSpeciesCount {
+  count: Int!
+  species: String!
+}
+
 input CreateAnimalInput {
   breed: String!
   color: String!
@@ -65,6 +70,17 @@ enum OrderDirection {
   DESC
 }
 
+type OwnerWeightStats {
+  animalCount: Int!
+  owner: Person!
+  totalWeight: Float!
+}
+
+type OwnershipStats {
+  animalCount: Int!
+  owner: Person!
+}
+
 type PaginatedAnimal {
   hasMore: Boolean!
   items: [Animal!]!
@@ -89,8 +105,14 @@ type Person {
 type Query {
   animal(id: Int!): Animal!
   animals(orderBy: OrderByInput, page: Int! = 1, take: Int! = 10): PaginatedAnimal!
+  heaviestAnimal: Animal!
+  mostCommonSpecies: [AnimalSpeciesCount!]!
+  oldestAnimal: Animal!
+  ownerWithHeaviestPets: OwnerWeightStats!
   person(id: Float!): Person!
   persons(page: Int! = 1, take: Int! = 10): PaginatedPerson!
+  topCatOwner: OwnershipStats!
+  topOwner: OwnershipStats!
 }
 
 input UpdateAnimalInput {
