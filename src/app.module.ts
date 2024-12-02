@@ -5,7 +5,7 @@ import * as path from 'path';
 import { DatabaseModule } from './config/database.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { PersonModule } from './person/person.module';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { UsersModule } from './users/users.module';
       envFilePath: path.resolve(process.cwd(), '.env.local'),
     }),
     DatabaseModule,
-    UsersModule,
+    PersonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
