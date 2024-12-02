@@ -5,6 +5,7 @@ import { UpdateAnimalInput } from './dto/update-animal.input';
 import { AnimalModel } from './interfaces/animal.interface';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { PaginationArgs } from '../common/pagination/pagination.args';
+import { OrderByInput } from './dto/order-by.input';
 
 interface AnimalRow extends RowDataPacket {
   id: number;
@@ -37,13 +38,20 @@ export class AnimalService {
     return this.findOne(result.insertId);
   }
 
-  async findAll(paginationArgs: PaginationArgs) {
+  async findAll(paginationArgs: PaginationArgs, orderBy?: OrderByInput) {
     const offset = (paginationArgs.page - 1) * paginationArgs.take;
+    let query = 'SELECT * FROM animal';
 
-    const [rows] = await this.dbService.query<AnimalRow[]>(
-      'SELECT * FROM animal LIMIT ? OFFSET ?',
-      [paginationArgs.take, offset],
-    );
+    if (orderBy) {
+      query += ` ORDER BY ${orderBy.field} ${orderBy.direction}`;
+    }
+
+    query += ' LIMIT ? OFFSET ?';
+
+    const [rows] = await this.dbService.query<AnimalRow[]>(query, [
+      paginationArgs.take,
+      offset,
+    ]);
 
     const [countResult] = await this.dbService.query<RowDataPacket[]>(
       'SELECT COUNT(*) as total FROM animal',

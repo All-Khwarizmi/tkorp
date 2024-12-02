@@ -18,6 +18,7 @@ import { Paginated } from '../common/pagination/pagination.type';
 import { Person } from '../person/entities/person.entity';
 import { PersonService } from '../person/person.service';
 import { AnimalModel } from './interfaces/animal.interface';
+import { OrderByInput } from './dto/order-by.input';
 
 @ObjectType()
 export class PaginatedAnimal extends Paginated(Animal) {}
@@ -30,8 +31,11 @@ export class AnimalResolver {
   ) {}
 
   @Query(() => PaginatedAnimal, { name: 'animals' })
-  async getAnimals(@Args() paginationArgs: PaginationArgs) {
-    const result = await this.animalService.findAll(paginationArgs);
+  async getAnimals(
+    @Args() paginationArgs: PaginationArgs,
+    @Args('orderBy', { nullable: true }) orderBy?: OrderByInput,
+  ) {
+    const result = await this.animalService.findAll(paginationArgs, orderBy);
     return {
       ...result,
       items: result.items.map((item) => ({

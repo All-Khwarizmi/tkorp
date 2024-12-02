@@ -14,6 +14,16 @@ type Animal {
   weight: Float!
 }
 
+enum AnimalOrderField {
+  breed
+  color
+  dateOfBirth
+  id
+  name
+  species
+  weight
+}
+
 input CreateAnimalInput {
   breed: String!
   color: String!
@@ -45,6 +55,16 @@ type Mutation {
   updatePerson(id: Float!, updatePersonInput: UpdatePersonInput!): Person!
 }
 
+input OrderByInput {
+  direction: OrderDirection!
+  field: AnimalOrderField!
+}
+
+enum OrderDirection {
+  ASC
+  DESC
+}
+
 type PaginatedAnimal {
   hasMore: Boolean!
   items: [Animal!]!
@@ -68,7 +88,7 @@ type Person {
 
 type Query {
   animal(id: Int!): Animal!
-  animals(page: Int! = 1, take: Int! = 10): PaginatedAnimal!
+  animals(orderBy: OrderByInput, page: Int! = 1, take: Int! = 10): PaginatedAnimal!
   person(id: Float!): Person!
   persons(page: Int! = 1, take: Int! = 10): PaginatedPerson!
 }
