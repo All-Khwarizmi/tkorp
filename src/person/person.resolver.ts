@@ -14,7 +14,7 @@ import { CreatePersonInput } from './dto/create-person.input';
 import { UpdatePersonInput } from './dto/update-person.input';
 import { PaginationArgs } from '../common/pagination/pagination.args';
 import { Paginated } from '../common/pagination/pagination.type';
-import { Animal } from 'src/animal/entities/animal.entity';
+import { Animal } from '../animal/entities/animal.entity';
 import { PersonModel } from './interfaces/person.interface';
 
 @ObjectType()
