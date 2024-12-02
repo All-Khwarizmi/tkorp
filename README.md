@@ -1,97 +1,107 @@
-# Pet Management API
+# TKORP - API de Gestion d'Animaux
 
-Une API GraphQL construite avec NestJS pour gérer les animaux de compagnie et leurs propriétaires.
+API GraphQL pour le système de gestion d'animaux de compagnie, construite avec NestJS.
 
-## 🚀 Fonctionnalités
+## 🌐 Démo en Direct
 
-### Implémentées
+[Voir la Démo](https://tkorp-production.up.railway.app/graphql)
 
-- ✅ CRUD complet pour les animaux et les propriétaires
-- ✅ Pagination des résultats
-- ✅ Validation des données (class-validator)
-- ✅ Queries spécialisées:
-  - Recherche de l'animal le plus vieux
-  - Statistiques des espèces les plus représentées
-  - Propriétaire avec le plus d'animaux
-  - Propriétaire avec le plus de chats
-  - Animal le plus lourd et son propriétaire
-  - Propriétaire avec le groupe d'animaux le plus lourd
-- ✅ Interface GraphQL complète et documentée
-- ✅ Support de tri des résultats
-- ✅ Gestion des relations One-to-Many
-- ✅ Script d'import de données
+## 🔗 Dépôts
 
-### Roadmap
+- [Dépôt Frontend](https://github.com/All-Khwarizmi/tkorp-client)
+- [Dépôt Backend](https://github.com/All-Khwarizmi/tkorp)
 
-- 📝 Documentation:
-  - [ ] Ajouter une documentation Swagger/OpenAPI
-  - [ ] Améliorer les commentaires dans le code
-  - [ ] Ajouter des exemples d'utilisation
+## 🏗️ Architecture
 
-- 🧪 Tests:
-  - [ ] Augmenter la couverture des tests unitaires
-  - [ ] Ajouter des tests e2e
-  - [ ] Ajouter des tests d'intégration pour les queries spécialisées
+Ce projet suit une architecture moderne et évolutive :
 
-- 📊 Monitoring:
-  - [ ] Implémenter un système de logging structuré
-  - [ ] Ajouter des métriques de performance
-  - [ ] Mettre en place un système de tracking des erreurs
+- **Framework** : NestJS
+- **API** : GraphQL
+- **Base de données** : MySQL
+- **ORM** : TypeORM
+- **Validation** : class-validator
+- **Tests** : Jest
+- **Déploiement** : Railway
 
-## 🛠 Technologies Utilisées
+## 📁 Structure du Projet
 
-- NestJS
-- GraphQL
-- MySQL
-- TypeScript
-- class-validator
-- Jest
-
-## 📦 Installation
-
-1. Cloner le repository
-```bash
-git clone [url-du-repo]
+```
+├── src/
+│   ├── animal/              # Module de gestion des animaux
+│   │   ├── dto/            # Objets de transfert de données
+│   │   ├── entities/       # Entités de base de données
+│   │   └── interfaces/     # Interfaces TypeScript
+│   ├── person/             # Module de gestion des personnes
+│   │   ├── dto/           
+│   │   ├── entities/      
+│   │   └── interfaces/     
+│   ├── common/             # Composants partagés
+│   │   └── pagination/     # Logique de pagination
+│   ├── config/             # Configuration
+│   │   └── database/       # Configuration de la base de données
+│   ├── scripts/            # Scripts utilitaires
+│   └── app.module.ts       # Module principal
+├── test/                   # Tests e2e
+└── db/                     # Scripts SQL et migrations
 ```
 
-2. Installer les dépendances
+## ✨ Fonctionnalités
+
+### Gestion des Animaux
+- CRUD complet pour les animaux
+- Pagination et tri des résultats
+- Filtrage par espèce et âge
+- Relations avec les propriétaires
+
+### Gestion des Propriétaires
+- CRUD complet pour les propriétaires
+- Association avec les animaux
+- Validation des données
+
+### Statistiques Avancées
+- Recherche de l'animal le plus âgé
+- Statistiques des espèces
+- Analyse des propriétaires
+- Records de poids
+- Métriques diverses
+
+## 🚀 Démarrage
+
+1. Cloner le dépôt :
+```bash
+git clone https://github.com/All-Khwarizmi/tkorp.git
+cd tkorp
+```
+
+2. Installer les dépendances :
 ```bash
 npm install
 ```
 
-3. Configurer les variables d'environnement
+3. Configurer les variables d'environnement :
 ```bash
 cp .env.example .env
-# Modifier les variables dans .env selon votre configuration
+# Modifier les variables selon votre configuration
 ```
 
-4. Initialiser la base de données
+4. Initialiser la base de données :
 ```bash
 npm run db:setup
-```
-
-5. Importer les données
-```bash
 npm run db:import
 ```
 
-## 🚀 Démarrage
-
+5. Lancer le serveur :
 ```bash
-# Développement
 npm run start:dev
-
-# Production
-npm run start:prod
 ```
 
-L'API sera disponible à l'adresse: http://localhost:5001/graphql
+L'API sera disponible à : http://localhost:5001/graphql
 
-## 📝 Utilisation de l'API
+## 📝 Exemples d'Utilisation
 
-### Exemples de Queries
+### Requêtes GraphQL
 
-1. Obtenir la liste des animaux (paginée)
+1. Liste des animaux (paginée) :
 ```graphql
 query {
   animals(page: 1, take: 10) {
@@ -110,7 +120,7 @@ query {
 }
 ```
 
-2. Obtenir les statistiques des espèces
+2. Statistiques des espèces :
 ```graphql
 query {
   mostCommonSpecies {
@@ -120,14 +130,13 @@ query {
 }
 ```
 
-3. Trouver le propriétaire avec le plus d'animaux
+3. Top propriétaire :
 ```graphql
 query {
   topOwner {
     owner {
       firstName
       lastName
-      email
     }
     animalCount
   }
@@ -143,14 +152,71 @@ npm run test
 # Tests e2e
 npm run test:e2e
 
-# Couverture des tests
+# Couverture
 npm run test:cov
 ```
 
-## 📄 License
+## 🛠️ Commandes de Développement
 
-MIT
+```bash
+# Développement
+npm run start:dev
+
+# Production
+npm run start:prod
+
+# Debug
+npm run start:debug
+
+# Linting
+npm run lint
+```
+
+## 🧬 Conventions de Code
+
+- TypeScript strict
+- Architecture modulaire NestJS
+- Tests unitaires pour les services
+- Documentation GraphQL complète
+- Validation des données avec class-validator
+- ESLint pour la qualité du code
+- Prettier pour le formatage
+
+## 📦 Dépendances Principales
+
+- NestJS
+- GraphQL
+- TypeORM
+- MySQL
+- class-validator
+- Jest
+- ts-node
+
+## 📋 Roadmap
+
+### Documentation
+- [ ] Documentation Swagger/OpenAPI
+- [ ] Amélioration des commentaires
+- [ ] Exemples d'utilisation détaillés
+
+### Tests
+- [ ] Augmentation de la couverture
+- [ ] Tests e2e complets
+- [ ] Tests d'intégration
+
+### Monitoring
+- [ ] Logging structuré
+- [ ] Métriques de performance
+- [ ] Tracking des erreurs
 
 ## 🤝 Contribution
 
-Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou une pull request.
+1. Forkez le dépôt
+2. Créez votre branche (`git checkout -b feature/nouvelle-fonctionnalite`)
+3. Committez vos changements (`git commit -m 'Ajout d'une nouvelle fonctionnalité'`)
+4. Poussez vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
+5. Ouvrez une Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence MIT.
