@@ -15,8 +15,13 @@ type Animal {
 }
 
 input CreateAnimalInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  breed: String!
+  color: String!
+  dateOfBirth: DateTime!
+  name: String!
+  ownerId: Int!
+  species: String!
+  weight: Int!
 }
 
 input CreatePersonInput {
@@ -36,8 +41,14 @@ type Mutation {
   createPerson(createPersonInput: CreatePersonInput!): Person!
   removeAnimal(id: Int!): Animal!
   removePerson(id: Float!): Person!
-  updateAnimal(updateAnimalInput: UpdateAnimalInput!): Animal!
+  updateAnimal(id: Int!, updateAnimalInput: UpdateAnimalInput!): Animal!
   updatePerson(id: Float!, updatePersonInput: UpdatePersonInput!): Person!
+}
+
+type PaginatedAnimal {
+  hasMore: Boolean!
+  items: [Animal!]!
+  total: Float!
 }
 
 type PaginatedPerson {
@@ -57,14 +68,19 @@ type Person {
 
 type Query {
   animal(id: Int!): Animal!
+  animals(page: Int! = 1, take: Int! = 10): PaginatedAnimal!
   person(id: Float!): Person!
   persons(page: Int! = 1, take: Int! = 10): PaginatedPerson!
 }
 
 input UpdateAnimalInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  breed: String
+  color: String
+  dateOfBirth: DateTime
+  name: String
+  ownerId: Int
+  species: String
+  weight: Int
 }
 
 input UpdatePersonInput {
