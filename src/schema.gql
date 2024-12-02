@@ -2,18 +2,41 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""
+Represents an animal in the pet management system
+"""
 type Animal {
+  """The breed of the animal"""
   breed: String!
+
+  """The color of the animal"""
   color: String!
+
+  """The date of birth of the animal"""
   dateOfBirth: DateTime!
+
+  """Unique identifier for the animal"""
   id: ID!
+
+  """The name of the animal"""
   name: String!
+
+  """The owner of the animal"""
   owner: Person!
+
+  """The ID of the owner"""
   ownerId: Float!
+
+  """The species of the animal (e.g., Dog, Cat, Bird)"""
   species: String!
+
+  """The weight of the animal in grams"""
   weight: Float!
 }
 
+"""
+Available fields for ordering animals
+"""
 enum AnimalOrderField {
   breed
   color
@@ -24,25 +47,57 @@ enum AnimalOrderField {
   weight
 }
 
+"""
+Statistics about animal species count
+"""
 type AnimalSpeciesCount {
+  """Number of animals of this species"""
   count: Int!
+
+  """The species name"""
   species: String!
 }
 
+"""
+Input for creating a new animal
+"""
 input CreateAnimalInput {
+  """The breed of the animal"""
   breed: String!
+
+  """The color of the animal"""
   color: String!
+
+  """The date of birth of the animal"""
   dateOfBirth: DateTime!
+
+  """The name of the animal"""
   name: String!
+
+  """The ID of the owner"""
   ownerId: Int!
+
+  """The species of the animal"""
   species: String!
+
+  """The weight of the animal in grams"""
   weight: Int!
 }
 
+"""
+Input for creating a new person
+"""
 input CreatePersonInput {
+  """The email address of the person"""
   email: String!
+
+  """The first name of the person"""
   firstName: String!
+
+  """The last name of the person"""
   lastName: String!
+
+  """The phone number of the person"""
   phoneNumber: String!
 }
 
@@ -51,83 +106,198 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+"""
+Root mutation type
+"""
 type Mutation {
+  """Create a new animal"""
   createAnimal(createAnimalInput: CreateAnimalInput!): Animal!
+
+  """Create a new person"""
   createPerson(createPersonInput: CreatePersonInput!): Person!
+
+  """Remove an animal by ID"""
   removeAnimal(id: Int!): Animal!
+
+  """Remove a person by ID"""
   removePerson(id: Float!): Person!
+
+  """Update an animal by ID"""
   updateAnimal(id: Int!, updateAnimalInput: UpdateAnimalInput!): Animal!
+
+  """Update a person by ID"""
   updatePerson(id: Float!, updatePersonInput: UpdatePersonInput!): Person!
 }
 
+"""
+Input for ordering results
+"""
 input OrderByInput {
+  """The direction to order by (ASC or DESC)"""
   direction: OrderDirection!
+
+  """The field to order by"""
   field: AnimalOrderField!
 }
 
+"""
+Order direction options
+"""
 enum OrderDirection {
   ASC
   DESC
 }
 
+"""
+Statistics about owner's animals weights
+"""
 type OwnerWeightStats {
+  """Number of animals owned"""
   animalCount: Int!
+
+  """The owner"""
   owner: Person!
+
+  """Total weight of all animals owned"""
   totalWeight: Float!
 }
 
+"""
+Statistics about animal ownership
+"""
 type OwnershipStats {
+  """Number of animals owned"""
   animalCount: Int!
+
+  """The owner"""
   owner: Person!
 }
 
+"""
+Paginated list of animals
+"""
 type PaginatedAnimal {
+  """Whether there are more items available"""
   hasMore: Boolean!
+
+  """The list of animals"""
   items: [Animal!]!
+
+  """Total number of items"""
   total: Float!
 }
 
+"""
+Paginated list of persons
+"""
 type PaginatedPerson {
+  """Whether there are more items available"""
   hasMore: Boolean!
+
+  """The list of persons"""
   items: [Person!]!
+
+  """Total number of items"""
   total: Float!
 }
 
+"""
+Represents a person in the pet management system
+"""
 type Person {
+  """List of animals owned by this person"""
   animals: [Animal!]!
+
+  """The email address of the person"""
   email: String!
+
+  """The first name of the person"""
   firstName: String!
+
+  """Unique identifier for the person"""
   id: ID!
+
+  """The last name of the person"""
   lastName: String!
+
+  """The phone number of the person"""
   phoneNumber: String!
 }
 
+"""
+Root query type
+"""
 type Query {
+  """Get an animal by ID"""
   animal(id: Int!): Animal!
+
+  """Get a paginated list of animals"""
   animals(orderBy: OrderByInput, page: Int! = 1, take: Int! = 10): PaginatedAnimal!
+
+  """Get the heaviest animal in the database"""
   heaviestAnimal: Animal!
+
+  """Get statistics about the most common animal species"""
   mostCommonSpecies: [AnimalSpeciesCount!]!
+
+  """Get the oldest animal in the database"""
   oldestAnimal: Animal!
+
+  """Get the owner with the heaviest total pet weight"""
   ownerWithHeaviestPets: OwnerWeightStats!
+
+  """Get a person by ID"""
   person(id: Float!): Person!
+
+  """Get a paginated list of persons"""
   persons(page: Int! = 1, take: Int! = 10): PaginatedPerson!
+
+  """Get the owner with the most cats"""
   topCatOwner: OwnershipStats!
+
+  """Get the owner with the most animals"""
   topOwner: OwnershipStats!
 }
 
+"""
+Input for updating an animal
+"""
 input UpdateAnimalInput {
+  """The breed of the animal"""
   breed: String
+
+  """The color of the animal"""
   color: String
+
+  """The date of birth of the animal"""
   dateOfBirth: DateTime
+
+  """The name of the animal"""
   name: String
+
+  """The ID of the owner"""
   ownerId: Int
+
+  """The species of the animal"""
   species: String
+
+  """The weight of the animal in grams"""
   weight: Int
 }
 
+"""
+Input for updating a person
+"""
 input UpdatePersonInput {
+  """The email address of the person"""
   email: String
+
+  """The first name of the person"""
   firstName: String
+
+  """The last name of the person"""
   lastName: String
+
+  """The phone number of the person"""
   phoneNumber: String
 }
