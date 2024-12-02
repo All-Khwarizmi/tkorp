@@ -1,6 +1,6 @@
-// apps/api/src/config/database.service.ts
+// database.service.ts
 import { Injectable } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createPool, Pool } from 'mysql2/promise';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -8,17 +8,15 @@ export class DatabaseService {
   private pool: Pool;
 
   constructor(private configService: ConfigService) {
-    this.pool = new Pool({
-      connectionString: configService.get<string>('DATABASE_URL'),
-    });
+    this.pool = createPool(configService.get<string>('DATABASE_URL'));
   }
 
   async query(text: string, params?: any[]) {
-    const client = await this.pool.connect();
+    const connection = await this.pool.getConnection();
     try {
-      return await client.query(text, params);
+      return await connection.query(text, params);
     } finally {
-      client.release();
+      connection.release();
     }
   }
 }
