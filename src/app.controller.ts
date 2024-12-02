@@ -17,44 +17,55 @@ export class AppController {
   @Post('init-db')
   async initDb() {
     try {
-      // Créer l'enum
-      await this.dbService.query(`
-        DO $$ 
-        BEGIN
-            IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_status') THEN
-                CREATE TYPE user_status AS ENUM ('active', 'inactive', 'pending');
-            END IF;
-        END $$;
-      `);
+      // 1. Supprimer les tables
+      await this.dbService.query('DROP TABLE IF EXISTS animal;');
+      await this.dbService.query('DROP TABLE IF EXISTS person;');
 
-      // Créer la table
+      // 2. Créer les tables
       await this.dbService.query(`
-        CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            email VARCHAR(255) UNIQUE NOT NULL,
-            status user_status DEFAULT 'pending',
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        CREATE TABLE IF NOT EXISTS person (
+          id INT PRIMARY KEY AUTO_INCREMENT,
+          lastName VARCHAR(255) NOT NULL,
+          firstName VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          phoneNumber VARCHAR(20) NOT NULL
         );
       `);
 
-      // Créer les index
       await this.dbService.query(`
-        CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-        CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
+        CREATE TABLE IF NOT EXISTS animal (
+          id INT PRIMARY KEY AUTO_INCREMENT,
+          name VARCHAR(255) NOT NULL,
+          dateOfBirth DATE NOT NULL,
+          species VARCHAR(255) NOT NULL,
+          breed VARCHAR(255) NOT NULL,
+          color VARCHAR(255) NOT NULL,
+          weight INT NOT NULL,
+          ownerId INT,
+          FOREIGN KEY (ownerId) REFERENCES person(id)
+        );
       `);
 
-      // Insérer des données de test
+      // 3. Insérer une seule personne et un seul animal pour tester
       await this.dbService.query(`
-        INSERT INTO users (name, email, status) 
-        VALUES 
-            ('John Doe', 'john@example.com', 'active'),
-            ('Jane Doe', 'jane@example.com', 'active'),
-            ('Bob Smith', 'bob@example.com', 'pending')
-        ON CONFLICT (email) DO NOTHING;
+        INSERT INTO person (lastName, firstName, email, phoneNumber) VALUES
+        ('Lee', 'Sarah', 'sarah.lee1@example.com', '555-0355');
       `);
 
-      return { message: 'Database initialized successfully' };
+      // 4. Vérifier l'ID de la personne insérée
+      const [result] = await this.dbService.query('SELECT id FROM person');
+      const personId = result[0].id;
+
+      // 5. Insérer un animal avec cet ID
+      await this.dbService.query(
+        `
+        INSERT INTO animal (name, dateOfBirth, species, breed, color, weight, ownerId) VALUES
+        ('Bella', '2013-05-08', 'Turtle', 'Musk Turtle', 'Spotted', 18272, ?);
+      `,
+        [personId],
+      );
+
+      return { message: 'Database initialized successfully', personId };
     } catch (error) {
       return { error: error.message };
     }
