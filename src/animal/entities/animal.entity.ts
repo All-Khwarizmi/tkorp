@@ -1,7 +1,32 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { Person } from '../../person/entities/person.entity';
 
 @ObjectType()
 export class Animal {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @Field(() => ID)
+  id: number;
+
+  @Field()
+  name: string;
+
+  @Field()
+  dateOfBirth: Date;
+
+  @Field()
+  species: string;
+
+  @Field()
+  breed: string;
+
+  @Field()
+  color: string;
+
+  @Field()
+  weight: number;
+
+  @Field(() => Person)
+  owner: Person;
+
+  @Field()
+  ownerId: number;
 }
