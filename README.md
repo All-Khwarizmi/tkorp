@@ -1,79 +1,156 @@
-# API NestJS
+# Pet Management API
 
-API REST construite avec NestJS et PostgreSQL.
+Une API GraphQL construite avec NestJS pour gérer les animaux de compagnie et leurs propriétaires.
 
-## 🛠️ Technologies
+## 🚀 Fonctionnalités
 
-- **NestJS**: Framework backend
-- **PostgreSQL**: Base de données
-- **Docker**: Conteneurisation
-- **Swagger**: Documentation API
+### Implémentées
+
+- ✅ CRUD complet pour les animaux et les propriétaires
+- ✅ Pagination des résultats
+- ✅ Validation des données (class-validator)
+- ✅ Queries spécialisées:
+  - Recherche de l'animal le plus vieux
+  - Statistiques des espèces les plus représentées
+  - Propriétaire avec le plus d'animaux
+  - Propriétaire avec le plus de chats
+  - Animal le plus lourd et son propriétaire
+  - Propriétaire avec le groupe d'animaux le plus lourd
+- ✅ Interface GraphQL complète et documentée
+- ✅ Support de tri des résultats
+- ✅ Gestion des relations One-to-Many
+- ✅ Script d'import de données
+
+### Roadmap
+
+- 📝 Documentation:
+  - [ ] Ajouter une documentation Swagger/OpenAPI
+  - [ ] Améliorer les commentaires dans le code
+  - [ ] Ajouter des exemples d'utilisation
+
+- 🧪 Tests:
+  - [ ] Augmenter la couverture des tests unitaires
+  - [ ] Ajouter des tests e2e
+  - [ ] Ajouter des tests d'intégration pour les queries spécialisées
+
+- 📊 Monitoring:
+  - [ ] Implémenter un système de logging structuré
+  - [ ] Ajouter des métriques de performance
+  - [ ] Mettre en place un système de tracking des erreurs
+
+## 🛠 Technologies Utilisées
+
+- NestJS
+- GraphQL
+- MySQL
+- TypeScript
+- class-validator
+- Jest
+
+## 📦 Installation
+
+1. Cloner le repository
+```bash
+git clone [url-du-repo]
+```
+
+2. Installer les dépendances
+```bash
+npm install
+```
+
+3. Configurer les variables d'environnement
+```bash
+cp .env.example .env
+# Modifier les variables dans .env selon votre configuration
+```
+
+4. Initialiser la base de données
+```bash
+npm run db:setup
+```
+
+5. Importer les données
+```bash
+npm run db:import
+```
 
 ## 🚀 Démarrage
 
 ```bash
-# Installation
-pnpm install
-
-# Démarrer PostgreSQL
-docker-compose up -d
-
-# Setup de la base de données
-pnpm run db:setup
-
 # Développement
-pnpm run start:dev
+npm run start:dev
 
-# Tests
-pnpm test
-
-# Build Docker
-docker build -t api .
+# Production
+npm run start:prod
 ```
 
-## 📊 Base de Données
+L'API sera disponible à l'adresse: http://localhost:5001/graphql
 
-### Configuration
+## 📝 Utilisation de l'API
 
-- Port: 5432
-- Base: myapp
-- Utilisateur: postgres
-- Mot de passe: postgres
+### Exemples de Queries
 
-### Migrations
+1. Obtenir la liste des animaux (paginée)
+```graphql
+query {
+  animals(page: 1, take: 10) {
+    items {
+      name
+      species
+      breed
+      owner {
+        firstName
+        lastName
+      }
+    }
+    total
+    hasMore
+  }
+}
+```
 
-Voir [documentation des migrations](./db/README.md)
+2. Obtenir les statistiques des espèces
+```graphql
+query {
+  mostCommonSpecies {
+    species
+    count
+  }
+}
+```
 
-## 📝 API Documentation
+3. Trouver le propriétaire avec le plus d'animaux
+```graphql
+query {
+  topOwner {
+    owner {
+      firstName
+      lastName
+      email
+    }
+    animalCount
+  }
+}
+```
 
-Swagger UI disponible sur `/api` en développement.
-
-### Endpoints
-
-- `GET /users`: Liste des utilisateurs
-- `GET /users/:id`: Détails d'un utilisateur
-- `POST /users`: Création d'utilisateur
-
-## 🐳 Docker
+## 🧪 Tests
 
 ```bash
-# Build
-docker build -t api .
+# Tests unitaires
+npm run test
 
-# Run
-docker run -p 5001:5001 \
-  --env DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/myapp \
-  api
+# Tests e2e
+npm run test:e2e
+
+# Couverture des tests
+npm run test:cov
 ```
 
-## 🔧 Variables d'Environnement
+## 📄 License
 
-```bash
-PORT=5001
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/myapp
-```
+MIT
 
-## 📈 Monitoring & Logs
+## 🤝 Contribution
 
-- Logs applicatifs dans `./logs`
-- Monitoring via les métriques NestJS
+Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou une pull request.

@@ -5,6 +5,8 @@ import { UpdateAnimalInput } from './dto/update-animal.input';
 import { AnimalModel } from './interfaces/animal.interface';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { PaginationArgs } from '../common/pagination/pagination.args';
+import { OrderByInput } from './dto/order-by.input';
+import { AnimalSpeciesCount } from './dto/stats.types';
 
 interface AnimalRow extends RowDataPacket {
   id: number;
@@ -15,6 +17,17 @@ interface AnimalRow extends RowDataPacket {
   color: string;
   weight: number;
   ownerId: number;
+}
+
+interface SpeciesCountRow extends RowDataPacket {
+  species: string;
+  count: number;
+}
+
+interface OwnerStatsRow extends RowDataPacket {
+  ownerId: number;
+  animalCount: number;
+  totalWeight?: number;
 }
 
 @Injectable()
@@ -37,13 +50,20 @@ export class AnimalService {
     return this.findOne(result.insertId);
   }
 
-  async findAll(paginationArgs: PaginationArgs) {
+  async findAll(paginationArgs: PaginationArgs, orderBy?: OrderByInput) {
     const offset = (paginationArgs.page - 1) * paginationArgs.take;
+    let query = 'SELECT * FROM animal';
 
-    const [rows] = await this.dbService.query<AnimalRow[]>(
-      'SELECT * FROM animal LIMIT ? OFFSET ?',
-      [paginationArgs.take, offset],
-    );
+    if (orderBy) {
+      query += ` ORDER BY ${orderBy.field} ${orderBy.direction}`;
+    }
+
+    query += ' LIMIT ? OFFSET ?';
+
+    const [rows] = await this.dbService.query<AnimalRow[]>(query, [
+      paginationArgs.take,
+      offset,
+    ]);
 
     const [countResult] = await this.dbService.query<RowDataPacket[]>(
       'SELECT COUNT(*) as total FROM animal',
@@ -63,6 +83,63 @@ export class AnimalService {
     const [rows] = await this.dbService.query<AnimalRow[]>(
       'SELECT * FROM animal WHERE id = ?',
       [id],
+    );
+    return this.mapToModel(rows[0]);
+  }
+
+  async getMostCommonSpecies(): Promise<AnimalSpeciesCount[]> {
+    const [rows] = await this.dbService.query<SpeciesCountRow[]>(
+      'SELECT species, COUNT(*) as count FROM animal GROUP BY species ORDER BY count DESC',
+    );
+    return rows.map((row) => ({
+      species: row.species,
+      count: row.count,
+    }));
+  }
+
+  async getTopOwners(): Promise<OwnerStatsRow[]> {
+    const [rows] = await this.dbService.query<OwnerStatsRow[]>(
+      `SELECT a.ownerId, COUNT(*) as animalCount 
+       FROM animal a 
+       GROUP BY a.ownerId 
+       ORDER BY animalCount DESC`,
+    );
+    return rows;
+  }
+
+  async getTopCatOwners(): Promise<OwnerStatsRow[]> {
+    const [rows] = await this.dbService.query<OwnerStatsRow[]>(
+      `SELECT a.ownerId, COUNT(*) as animalCount 
+       FROM animal a 
+       WHERE a.species = 'Cat'
+       GROUP BY a.ownerId 
+       ORDER BY animalCount DESC`,
+    );
+    return rows;
+  }
+
+  async getOwnersByTotalPetWeight(): Promise<OwnerStatsRow[]> {
+    const [rows] = await this.dbService.query<OwnerStatsRow[]>(
+      `SELECT a.ownerId, 
+              COUNT(*) as animalCount,
+              SUM(a.weight) as totalWeight
+       FROM animal a 
+       GROUP BY a.ownerId 
+       ORDER BY totalWeight DESC`,
+    );
+    return rows;
+  }
+
+  async getOldestAnimal(): Promise<AnimalModel> {
+    const [rows] = await this.dbService.query<AnimalRow[]>(
+      'SELECT * FROM animal ORDER BY dateOfBirth ASC LIMIT 1',
+    );
+    return this.mapToModel(rows[0]);
+  }
+
+  async getHeaviestAnimal(): Promise<AnimalModel> {
+    const [rows] = await this.dbService.query<AnimalRow[]>(
+      'SELECT * FROM animal ORDER BY weight DESC LIMIT 1',
     );
     return this.mapToModel(rows[0]);
   }
