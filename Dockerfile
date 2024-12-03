@@ -26,8 +26,6 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 
-# Copier les scripts SQL
-COPY db/init.sql ./db/init.sql
 
 EXPOSE 5001
 
