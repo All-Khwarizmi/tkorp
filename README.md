@@ -17,15 +17,12 @@ docker-compose up -d
 
 # Attendre quelques secondes que MySQL démarre complètement
 sleep 15
-
-# Obtenir l'adresse IP du conteneur MySQL
-DB_HOST=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nest-template-db-1)
 ```
 
 ### 3. Configurer l'environnement
 ```bash
-# Créer le fichier .env.local avec l'adresse IP du conteneur
-echo "DATABASE_URL=mysql://root:empty@$DB_HOST:3306/tkorp" > .env.local
+# Créer le fichier .env.local
+echo "DATABASE_URL=mysql://root:empty@localhost:3306/tkorp" > .env.local
 echo "PORT=5001" >> .env.local
 ```
 
@@ -36,8 +33,7 @@ npm install
 
 ### 5. Importer les données de test
 ```bash
-# Utiliser la variable d'environnement avec l'adresse IP du conteneur
-DATABASE_URL=mysql://root:empty@$DB_HOST:3306/tkorp npm run db:import
+npm run db:import
 ```
 
 ### 6. Lancer l'application
@@ -159,20 +155,7 @@ query {
 
 ## ⚠️ Troubleshooting
 
-### Erreur "Access denied for user 'root'"
-Si vous utilisez Docker Desktop sur Mac ou Windows :
-1. Obtenez l'adresse IP du conteneur MySQL :
-```bash
-DB_HOST=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nest-template-db-1)
-```
-
-2. Utilisez cette adresse dans votre configuration :
-```bash
-echo "DATABASE_URL=mysql://root:empty@$DB_HOST:3306/tkorp" > .env.local
-DATABASE_URL=mysql://root:empty@$DB_HOST:3306/tkorp npm run db:import
-```
-
-### Erreur "Connection lost"
+### Erreur "Connection lost" ou "ETIMEDOUT"
 1. MySQL n'est probablement pas encore prêt
 2. Attendez quelques secondes et réessayez
 3. Vérifiez que le conteneur MySQL est en cours d'exécution :
@@ -181,20 +164,20 @@ docker-compose ps
 docker-compose logs -f db
 ```
 
-### Script complet pour Mac/Windows
+### Script complet
 ```bash
 # Démarrer MySQL et attendre qu'il soit prêt
 docker-compose up -d && sleep 15
 
-# Obtenir l'adresse IP du conteneur
-DB_HOST=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nest-template-db-1)
-
 # Configurer l'environnement
-echo "DATABASE_URL=mysql://root:empty@$DB_HOST:3306/tkorp" > .env.local
+echo "DATABASE_URL=mysql://root:empty@localhost:3306/tkorp" > .env.local
 echo "PORT=5001" >> .env.local
 
+# Installer les dépendances
+npm install
+
 # Importer les données
-DATABASE_URL=mysql://root:empty@$DB_HOST:3306/tkorp npm run db:import
+npm run db:import
 
 # Démarrer l'application
 npm run start:dev
