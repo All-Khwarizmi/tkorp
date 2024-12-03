@@ -1,16 +1,10 @@
-# apps/api/docker-compose.yml
 version: '3.8'
 services:
   db:
-    image: postgres:14-alpine
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
     ports:
-      - "5432:5432"
+      - "3306:3306"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=myapp
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
+      - MYSQL_ROOT_PASSWORD=empty
+      - MYSQL_DATABASE=tkorp
