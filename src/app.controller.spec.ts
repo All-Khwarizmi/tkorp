@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseService } from './config/database.service';
-import { ConfigService } from '@nestjs/config';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -12,16 +11,10 @@ describe('AppController', () => {
       controllers: [AppController],
       providers: [
         AppService,
-        DatabaseService,
         {
-          provide: ConfigService,
+          provide: DatabaseService,
           useValue: {
-            get: jest.fn((key: string) => {
-              if (key === 'DATABASE_URL') {
-                return 'mysql://fake:fake@localhost:3306/fakedb';
-              }
-              return null;
-            }),
+            query: jest.fn(),
           },
         },
       ],
@@ -31,8 +24,10 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return welcome message', () => {
+      expect(appController.getHello()).toBe(
+        'Welcome to the Pet Management API! Visit /graphql api documentation.',
+      );
     });
   });
 });

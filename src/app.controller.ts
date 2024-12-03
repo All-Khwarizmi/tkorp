@@ -2,6 +2,9 @@
 import { Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { DatabaseService } from './config/database.service';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+
+@ApiTags('Application')
 @Controller()
 export class AppController {
   constructor(
@@ -10,11 +13,37 @@ export class AppController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get welcome message' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the welcome message',
+  })
   getHello(): string {
-    return this.appService.getHello();
+    return 'Welcome to the Pet Management API! Visit /graphql api documentation.';
   }
 
   @Post('init-db')
+  @ApiOperation({ summary: 'Initialize database with sample data' })
+  @ApiResponse({
+    status: 200,
+    description: 'Database initialized successfully with sample data',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error initializing database',
+    schema: {
+      type: 'object',
+      properties: {
+        error: { type: 'string' },
+      },
+    },
+  })
   async initDb() {
     try {
       // 1. Supprimer les tables
