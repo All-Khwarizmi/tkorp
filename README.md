@@ -12,17 +12,19 @@ cd tkorp
 
 ### 2. Configurer l'environnement
 ```bash
-# Créer le fichier .env.local
-cp .env.example .env.local
-
-# Le contenu du .env.local doit être :
-DATABASE_URL=mysql://root:empty@localhost:3306/tkorp
-PORT=5001
+# Créer le fichier .env.local avec la configuration
+echo "DATABASE_URL=mysql://root:empty@localhost:3306/tkorp" > .env.local
+echo "PORT=5001" >> .env.local
 ```
 
 ### 3. Lancer MySQL avec Docker
 ```bash
+# Démarrer MySQL (le mot de passe root est 'empty')
 docker-compose up -d
+
+# ⚠️ Important : Attendre que MySQL soit complètement démarré (environ 15 secondes)
+# Vous pouvez vérifier le statut avec :
+docker-compose logs -f db
 ```
 
 ### 4. Installer les dépendances
@@ -32,7 +34,8 @@ npm install
 
 ### 5. Importer les données de test
 ```bash
-npm run db:import
+# Utiliser la variable d'environnement explicitement pour éviter les problèmes de chargement
+DATABASE_URL=mysql://root:empty@localhost:3306/tkorp npm run db:import
 ```
 
 ### 6. Lancer l'application
@@ -151,3 +154,26 @@ query {
 
 - [Frontend Repository](https://github.com/All-Khwarizmi/tkorp-client)
 - [Demo API](https://tkorp-production.up.railway.app/graphql)
+
+## ⚠️ Troubleshooting
+
+### Erreur "DATABASE_URL environment variable is not set"
+1. Vérifiez que le fichier .env.local existe et contient la bonne configuration
+2. Utilisez la variable d'environnement explicitement :
+```bash
+DATABASE_URL=mysql://root:empty@localhost:3306/tkorp npm run db:import
+```
+
+### Erreur "Access denied for user 'root'"
+1. Vérifiez que MySQL est bien démarré : `docker-compose ps`
+2. Attendez au moins 15 secondes que MySQL soit complètement initialisé
+3. Vérifiez les logs MySQL : `docker-compose logs -f db`
+4. Assurez-vous que le mot de passe correspond (par défaut : 'empty')
+
+### Erreur "Connection lost"
+1. MySQL n'est probablement pas encore prêt
+2. Attendez quelques secondes et réessayez
+3. Vérifiez que le conteneur MySQL est en cours d'exécution :
+```bash
+docker-compose ps
+docker-compose logs -f db
