@@ -26,7 +26,7 @@ describe('AppController', () => {
   describe('root', () => {
     it('should return welcome message', () => {
       expect(appController.getHello()).toBe(
-        'Welcome to the Pet Management API! Visit /api for Swagger documentation.',
+        'Welcome to the Pet Management API! Visit /graphql api documentation.',
       );
     });
   });
