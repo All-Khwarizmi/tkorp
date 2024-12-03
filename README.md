@@ -12,17 +12,20 @@ cd tkorp
 
 ### 2. Configurer l'environnement
 ```bash
-# Créer le fichier .env.local
+# Copier le fichier d'exemple
 cp .env.example .env.local
 
-# Le contenu du .env.local doit être :
+# Le fichier .env.local contient déjà :
 DATABASE_URL=mysql://root:empty@localhost:3306/tkorp
 PORT=5001
 ```
 
 ### 3. Lancer MySQL avec Docker
 ```bash
+# Démarrer MySQL (le mot de passe root est 'empty')
 docker-compose up -d
+
+# Attendre quelques secondes que MySQL démarre complètement
 ```
 
 ### 4. Installer les dépendances
@@ -32,6 +35,7 @@ npm install
 
 ### 5. Importer les données de test
 ```bash
+# Assurez-vous que MySQL est bien démarré avant d'importer
 npm run db:import
 ```
 
@@ -151,3 +155,12 @@ query {
 
 - [Frontend Repository](https://github.com/All-Khwarizmi/tkorp-client)
 - [Demo API](https://tkorp-production.up.railway.app/graphql)
+
+## ⚠️ Troubleshooting
+
+### Erreur "Access denied for user 'root'"
+Si vous rencontrez cette erreur lors de l'import des données :
+1. Vérifiez que MySQL est bien démarré : `docker-compose ps`
+2. Attendez quelques secondes que MySQL soit complètement initialisé
+3. Vérifiez que le fichier .env.local contient la bonne URL : `mysql://root:empty@localhost:3306/tkorp`
+4. Réessayez l'import : `npm run db:import`
