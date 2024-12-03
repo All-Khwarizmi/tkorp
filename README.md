@@ -12,12 +12,9 @@ cd tkorp
 
 ### 2. Configurer l'environnement
 ```bash
-# Copier le fichier d'exemple
-cp .env.example .env.local
-
-# Le fichier .env.local contient déjà :
-DATABASE_URL=mysql://root:empty@localhost:3306/tkorp
-PORT=5001
+# Créer le fichier .env.local avec la configuration
+echo "DATABASE_URL=mysql://root:empty@localhost:3306/tkorp" > .env.local
+echo "PORT=5001" >> .env.local
 ```
 
 ### 3. Lancer MySQL avec Docker
@@ -25,7 +22,9 @@ PORT=5001
 # Démarrer MySQL (le mot de passe root est 'empty')
 docker-compose up -d
 
-# Attendre quelques secondes que MySQL démarre complètement
+# ⚠️ Important : Attendre que MySQL soit complètement démarré (environ 15 secondes)
+# Vous pouvez vérifier le statut avec :
+docker-compose logs -f db
 ```
 
 ### 4. Installer les dépendances
@@ -35,8 +34,8 @@ npm install
 
 ### 5. Importer les données de test
 ```bash
-# Assurez-vous que MySQL est bien démarré avant d'importer
-npm run db:import
+# Utiliser la variable d'environnement explicitement pour éviter les problèmes de chargement
+DATABASE_URL=mysql://root:empty@localhost:3306/tkorp npm run db:import
 ```
 
 ### 6. Lancer l'application
@@ -158,9 +157,23 @@ query {
 
 ## ⚠️ Troubleshooting
 
+### Erreur "DATABASE_URL environment variable is not set"
+1. Vérifiez que le fichier .env.local existe et contient la bonne configuration
+2. Utilisez la variable d'environnement explicitement :
+```bash
+DATABASE_URL=mysql://root:empty@localhost:3306/tkorp npm run db:import
+```
+
 ### Erreur "Access denied for user 'root'"
-Si vous rencontrez cette erreur lors de l'import des données :
 1. Vérifiez que MySQL est bien démarré : `docker-compose ps`
-2. Attendez quelques secondes que MySQL soit complètement initialisé
-3. Vérifiez que le fichier .env.local contient la bonne URL : `mysql://root:empty@localhost:3306/tkorp`
-4. Réessayez l'import : `npm run db:import`
+2. Attendez au moins 15 secondes que MySQL soit complètement initialisé
+3. Vérifiez les logs MySQL : `docker-compose logs -f db`
+4. Assurez-vous que le mot de passe correspond (par défaut : 'empty')
+
+### Erreur "Connection lost"
+1. MySQL n'est probablement pas encore prêt
+2. Attendez quelques secondes et réessayez
+3. Vérifiez que le conteneur MySQL est en cours d'exécution :
+```bash
+docker-compose ps
+docker-compose logs -f db
