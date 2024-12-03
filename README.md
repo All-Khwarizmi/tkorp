@@ -24,7 +24,7 @@ sleep 15
 ### 3. Configurer l'environnement
 
 ```bash
-# Créer le fichier .env.local
+# Créer le fichier .env
 echo "DATABASE_URL=mysql://root:empty@localhost:3306/tkorp" > .env
 echo "PORT=5001" >> .env
 ```
