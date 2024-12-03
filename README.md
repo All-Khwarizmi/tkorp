@@ -5,12 +5,14 @@ API GraphQL de gestion d'animaux de compagnie avec NestJS et MySQL.
 ## 🚀 Installation Rapide
 
 ### 1. Cloner le projet
+
 ```bash
 git clone https://github.com/All-Khwarizmi/tkorp.git
 cd tkorp
 ```
 
 ### 2. Lancer MySQL avec Docker
+
 ```bash
 # Démarrer MySQL (le mot de passe root est 'empty')
 docker-compose up -d
@@ -20,23 +22,27 @@ sleep 15
 ```
 
 ### 3. Configurer l'environnement
+
 ```bash
 # Créer le fichier .env.local
-echo "DATABASE_URL=mysql://root:empty@localhost:3306/tkorp" > .env.local
-echo "PORT=5001" >> .env.local
+echo "DATABASE_URL=mysql://root:empty@localhost:3306/tkorp" > .env
+echo "PORT=5001" >> .env
 ```
 
 ### 4. Installer les dépendances
+
 ```bash
 npm install
 ```
 
 ### 5. Importer les données de test
+
 ```bash
 npm run db:import
 ```
 
 ### 6. Lancer l'application
+
 ```bash
 npm run start:dev
 
@@ -87,29 +93,35 @@ describe('PersonService', () => {
 ## 📊 Analyse des Données
 
 ### 1. Animal le plus âgé (15 ans)
+
 - Rocky (Flemish Giant Rabbit) - Propriétaire : Emma Johnson
 - Luna (Persian Cat) - Propriétaire : William Taylor
 - Max (Golden Retriever) - Propriétaire : Oliver Wilson
 
 ### 2. Espèces les plus représentées
+
 1. Bird : 179 animaux
 2. Cat : 165 animaux
 3. Dog : 156 animaux
 
 ### 3. Top propriétaires d'animaux
+
 1. Sophia Brown : 6 animaux
 2. Emma Johnson : 5 animaux
 3. William Taylor : 5 animaux
 
 ### 4. Top propriétaires de chats
+
 1. Sarah White : 4 chats
 2. Emma Johnson : 3 chats
 3. Oliver Wilson : 3 chats
 
 ### 5. Animal le plus lourd
+
 - Chloe (Poodle, 49.937 kg) - Propriétaire : Emma Smith
 
 ### 6. Groupes d'animaux les plus lourds
+
 1. Sophia Brown : 172.152 kg (6 animaux)
 2. William Taylor : 165.847 kg (5 animaux)
 3. Emma Johnson : 158.623 kg (5 animaux)
@@ -156,15 +168,18 @@ query {
 ## ⚠️ Troubleshooting
 
 ### Erreur "Connection lost" ou "ETIMEDOUT"
+
 1. MySQL n'est probablement pas encore prêt
 2. Attendez quelques secondes et réessayez
 3. Vérifiez que le conteneur MySQL est en cours d'exécution :
+
 ```bash
 docker-compose ps
 docker-compose logs -f db
 ```
 
 ### Script complet
+
 ```bash
 # Démarrer MySQL et attendre qu'il soit prêt
 docker-compose up -d && sleep 15
@@ -181,3 +196,4 @@ npm run db:import
 
 # Démarrer l'application
 npm run start:dev
+```
